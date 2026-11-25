@@ -1,0 +1,41 @@
+{
+  "sourceFile": "1684938289854546.pdf",
+  "lattesId": "1684938289854546",
+  "lattesUrl": "http://lattes.cnpq.br/1684938289854546",
+  "lastUpdated": "25/11/2026",
+  "articles": [
+    {
+      "id": "lattes-art-1",
+      "title": "Image Reshaping of Lexical and DNS Features for Malicious Domain Classification: A Stacking Ensemble Based on Visual, Textual and Tabular Models",
+      "event": "28th International Conference on Enterprise Information Systems — Benidorm",
+      "year": "2026",
+      "authors": "LOBATO, LUÍS; ZANCHETTA DO NASCIMENTO, MARCELO; ROBERTO, GUILHERME; PELICANO JUNIOR, SÉRGIO; NEVES, LEANDRO; et.al"
+    },
+    {
+      "id": "lattes-art-2",
+      "title": "ViT-Based Feature Extraction and Hybrid Ensembles for Visually Reshaped DNS Traffic",
+      "event": "XXXIX Conference on Graphics, Patterns, and Images (SIBGRAPI 2026) — Goiânia SP",
+      "year": "2026",
+      "authors": "LOBATO, L. H. S.; NEVES, Leandro; CANSIAN, ADRIANO; ROBERTO, GUILHERME"
+    },
+    {
+      "id": "lattes-art-3",
+      "title": "Detecção de Ataques Cibernéticos via Vision Transformers, BERT e técnicas de Reshaping",
+      "event": "XXXVII Congresso de Iniciação Científica e Tecnológica da Unesp — São José do Rio Preto",
+      "year": "2025",
+      "authors": "LOBATO, L. H. S.; NEVES, Leandro; CANSIAN, ADRIANO"
+    }
+  ],
+  "experiences": [
+    {
+      "period": "08/2025 - 08/2026",
+      "title": "Bolsista de Iniciação Científica · UNESP / LIPAI",
+      "description": "Uso Integrado de BERT, Reshaping e Vision Transformers para Detecção de Domínios Maliciosos e requisições HTTP"
+    },
+    {
+      "period": "08/2024 - 08/2025",
+      "title": "Bolsista de Iniciação Científica · UNESP / LIPAI",
+      "description": "Investigação de malware com técnicas BERT e Vision Transformers"
+    }
+  ]
+}
