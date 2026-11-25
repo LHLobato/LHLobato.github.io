@@ -9,11 +9,13 @@ echo "  Portfólio Luís Henrique Lobato — Ambiente Local"
 echo "  [TARDIS Telemetry: ONLINE | ECG Condition: FINE]"
 echo "======================================================"
 
-# Garante que a imagem de perfil em /assets esteja sincronizada com public/assets
+# Garante que as imagens em /assets estejam sincronizadas com public/assets
 mkdir -p public/assets
-if [ -f "assets/perfil.jpg" ]; then
-  cp assets/perfil.jpg public/assets/perfil.jpg
-fi
+for img in assets/*.jpg assets/*.jpeg assets/*.png assets/*.webp; do
+  if [ -f "$img" ]; then
+    cp "$img" public/assets/
+  fi
+done
 
 # Extrai automaticamente os artigos e vínculos do PDF do Lattes em /assets
 if command -v python3 >/dev/null 2>&1; then
