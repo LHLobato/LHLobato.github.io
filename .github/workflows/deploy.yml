@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -35,7 +35,14 @@ jobs:
         run: npm ci
 
       - name: Build production static bundle (dist)
-        run: npm run build
+        run: npm run build && touch dist/.nojekyll
+
+      - name: Publish dist/ to gh-pages branch (fallback for Pages API outage)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          force_orphan: true
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
@@ -55,3 +62,5 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          timeout: 1800000

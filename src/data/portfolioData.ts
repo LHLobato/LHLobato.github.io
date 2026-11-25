@@ -29,6 +29,7 @@ export interface ProjectItem {
   deployUrl: string;
   repoUrl?: string;
   imageUrl?: string;
+  architectureNote?: string;
 }
 
 export interface ScientificArticle {
@@ -129,45 +130,22 @@ export const PROFILE_DATA = {
 };
 
 /**
- * PROJETOS (A serem preenchidos)
- * Edite os itens abaixo com os títulos, descrições e links de deploy reais dos seus projetos.
+ * PROJETOS
+ * Adicione novos objetos a este array para publicar mais projetos no portfólio.
  */
 export const PROJECTS: ProjectItem[] = [
   {
-    id: 'proj-1',
-    category: 'backend-rag',
-    categoryLabel: 'Backend & RAG',
-    meta: 'ANO • CATEGORIA DO PROJETO • STATUS / MÉTRICA',
-    title: 'Nome do Projeto 01 [A ser preenchido]',
-    description:
-      'Breve descrição do projeto a ser preenchida. Explique o problema abordado, a arquitetura adotada (ex.: API em FastAPI, busca vetorial com pgvector ou integração com LLMs) e os resultados obtidos.',
-    stackLine: 'Python · FastAPI · PostgreSQL (pgvector) · Docker',
-    deployUrl: 'https://github.com/LHLobato',
-    repoUrl: 'https://github.com/LHLobato',
-  },
-  {
-    id: 'proj-2',
+    id: 'animeletron',
     category: 'ia-pesquisa',
     categoryLabel: 'IA & Modelos',
-    meta: 'ANO • VISÃO COMPUTACIONAL / NLP • PESQUISA APLICADA',
-    title: 'Nome do Projeto 02 [A ser preenchido]',
+    meta: 'VISÃO COMPUTACIONAL • EFFICIENTNET • ONNX WEB INFERENCE',
+    title: 'Animeletron',
     description:
-      'Breve descrição do projeto a ser preenchida. Detalhe o pipeline de Machine Learning / Deep Learning em PyTorch, as métricas avaliadas e a disponibilização do modelo para uso real.',
-    stackLine: 'Python · PyTorch · LangChain · Gemini API',
-    deployUrl: 'https://github.com/LHLobato',
-    repoUrl: 'https://github.com/LHLobato',
-  },
-  {
-    id: 'proj-3',
-    category: 'web',
-    categoryLabel: 'Web & Sistemas',
-    meta: 'ANO • ENGENHARIA DE SOFTWARE • FULLSTACK / BACKEND',
-    title: 'Nome do Projeto 03 [A ser preenchido]',
-    description:
-      'Breve descrição do projeto a ser preenchida. Descreva a aplicação desenvolvida, a modelagem de banco de dados e o link para acesso ao projeto em deploy.',
-    stackLine: 'TypeScript · React · SQL · Linux',
-    deployUrl: 'https://github.com/LHLobato',
-    repoUrl: 'https://github.com/LHLobato',
+      'Um modelo EfficientNet foi treinado com imagens extraídas do Pinterest e otimizado via ONNX (para rodar diretamente no navegador) para classificar a qual anime pertence o personagem enviado pelo usuário.',
+    stackLine: 'Python · PyTorch · EfficientNet · ONNX Runtime Web · Visão Computacional',
+    deployUrl: 'https://lhlobato.github.io/what_anime_is_it_from/',
+    repoUrl: 'https://github.com/LHLobato/what_anime_is_it_from',
+    architectureNote: 'Pinterest Dataset ➔ EfficientNet Training ➔ ONNX Quantization/Export ➔ In-Browser Inference',
   },
 ];
 

@@ -542,7 +542,14 @@ export const App: React.FC = () => {
                 key={project.id}
                 className={`project-case ${index % 2 === 1 ? 'reverse' : ''}`}
               >
-                <div className="project-preview">
+                <a
+                  href={project.deployUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="project-preview"
+                  style={{ textDecoration: 'none' }}
+                  aria-label={`Abrir deploy do projeto ${project.title}`}
+                >
                   {project.imageUrl ? (
                     <img
                       src={project.imageUrl}
@@ -553,23 +560,38 @@ export const App: React.FC = () => {
                     <div className="project-preview-grid">
                       <Terminal
                         size={28}
-                        style={{ color: 'var(--primary)', opacity: 0.8 }}
+                        style={{ color: 'var(--primary)', opacity: 0.9 }}
                       />
                       <span
-                        className="font-label text-label-md"
+                        className="font-headline text-title-lg"
                         style={{ color: 'var(--on-surface)' }}
                       >
                         {project.title}
                       </span>
+                      {project.architectureNote && (
+                        <span
+                          className="font-label text-label-md"
+                          style={{
+                            color: 'var(--primary)',
+                            maxWidth: '38ch',
+                            lineHeight: 1.5,
+                          }}
+                        >
+                          {project.architectureNote}
+                        </span>
+                      )}
                       <span
                         className="font-label text-label-md"
-                        style={{ color: 'var(--on-surface-variant)' }}
+                        style={{
+                          color: 'var(--on-surface-variant)',
+                          marginTop: '0.25rem',
+                        }}
                       >
-                        [Preview / Imagem do projeto a ser preenchido]
+                        lhlobato.github.io/what_anime_is_it_from ↗
                       </span>
                     </div>
                   )}
-                </div>
+                </a>
 
                 <div className="project-info">
                   <span className="font-label text-label-md project-meta">
