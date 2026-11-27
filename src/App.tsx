@@ -12,6 +12,8 @@ import {
   Terminal,
   FileText,
   Languages,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import {
   PROFILE_META,
@@ -21,6 +23,9 @@ import {
   LattesPayload,
   Language,
   ExperienceRow,
+  ProjectItem,
+  ProjectFolder,
+  getProjectImages,
 } from './data/portfolioData';
 
 type ThemeMode = 'dark' | 'light';
@@ -107,6 +112,11 @@ export const App: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<FilterCategory>('todos');
   const [lattesData, setLattesData] = useState<LattesPayload>(INITIAL_LATTES_DATA);
   const [checkingLattes, setCheckingLattes] = useState<boolean>(false);
+  const [projectImagesMap, setProjectImagesMap] = useState<
+    Partial<Record<ProjectFolder, string[]>>
+  >({});
+  const [slideIndices, setSlideIndices] = useState<Record<string, number>>({});
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
   // Resident Evil ECG & Save Room Easter Egg State
   const [vitality, setVitality] = useState<VitalityState>('FINE');
@@ -152,7 +162,55 @@ export const App: React.FC = () => {
         }
       })
       .catch(() => {});
+
+    fetch('./projectImages.json')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: Partial<Record<ProjectFolder, string[]>> | null) => {
+        if (data && typeof data === 'object') {
+          setProjectImagesMap(data);
+        }
+      })
+      .catch(() => {});
   }, []);
+
+  const resolveGalleryForProject = (project: ProjectItem, index: number): string[] => {
+    const folder: ProjectFolder =
+      project.folder ||
+      ((`projeto${(index % 3) + 1}`) as ProjectFolder);
+    const dynamicFromFetch = projectImagesMap[folder];
+    const baseList =
+      dynamicFromFetch && dynamicFromFetch.length > 0
+        ? dynamicFromFetch
+        : getProjectImages(folder, project.images, project.imageUrl);
+
+    return baseList.filter((src) => !failedImages[src]);
+  };
+
+  const handleSlideStep = (
+    e: React.MouseEvent,
+    projectId: string,
+    total: number,
+    delta: number
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (total <= 1) return;
+    setSlideIndices((prev) => {
+      const current = prev[projectId] ?? 0;
+      const next = (current + delta + total) % total;
+      return { ...prev, [projectId]: next };
+    });
+  };
+
+  const handleSlideSelect = (
+    e: React.MouseEvent,
+    projectId: string,
+    targetIndex: number
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSlideIndices((prev) => ({ ...prev, [projectId]: targetIndex }));
+  };
 
   // Secret keyboard commands: "tardis", "stars", "herb"
   useEffect(() => {
@@ -638,104 +696,188 @@ export const App: React.FC = () => {
           </div>
 
           <div className="projects-stack">
-            {filteredProjects.map((project, index) => (
-              <article
-                key={project.id}
-                className={`project-case ${index % 2 === 1 ? 'reverse' : ''}`}
-              >
-                <a
-                  href={project.deployUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="project-preview"
-                  style={{ textDecoration: 'none' }}
-                  aria-label={`${content.projectCta.deploy} - ${project.title}`}
-                >
-                  {project.imageUrl ? (
-                    <img
-                      src={project.imageUrl}
-                      alt={project.title}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'contain',
-                        borderRadius: '6px',
-                      }}
-                    />
-                  ) : (
-                    <div className="project-preview-grid">
-                      <Terminal
-                        size={28}
-                        style={{ color: 'var(--primary)', opacity: 0.9 }}
-                      />
-                      <span
-                        className="font-headline text-title-lg"
-                        style={{ color: 'var(--on-surface)' }}
-                      >
-                        {project.title}
-                      </span>
-                      {project.architectureNote && (
-                        <span
-                          className="font-label text-label-md"
-                          style={{
-                            color: 'var(--primary)',
-                            maxWidth: '38ch',
-                            lineHeight: 1.5,
-                          }}
-                        >
-                          {project.architectureNote}
-                        </span>
-                      )}
-                      <span
-                        className="font-label text-label-md"
-                        style={{
-                          color: 'var(--on-surface-variant)',
-                          marginTop: '0.25rem',
-                        }}
-                      >
-                        lhlobato.github.io/what_anime_is_it_from ↗
-                      </span>
-                    </div>
-                  )}
-                </a>
+            {filteredProjects.map((project, index) => {
+              const gallery = resolveGalleryForProject(project, index);
+              const totalSlides = gallery.length;
+              const currentSlide =
+                totalSlides > 0
+                  ? (slideIndices[project.id] ?? 0) % totalSlides
+                  : 0;
+              const activeImageSrc =
+                totalSlides > 0 ? gallery[currentSlide] : undefined;
 
-                <div className="project-info">
-                  <span className="font-label text-label-md project-meta">
-                    {project.meta[lang]}
-                  </span>
-                  <h3 className="font-headline text-headline-md">{project.title}</h3>
-                  <p className="font-body text-body-md project-desc">
-                    {project.description[lang]}
-                  </p>
-                  <p className="font-label text-label-md project-tech">
-                    {project.stackLine[lang]}
-                  </p>
-                  <div className="project-links-row">
+              return (
+                <article
+                  key={project.id}
+                  className={`project-case ${index % 2 === 1 ? 'reverse' : ''}`}
+                >
+                  <div className="project-preview">
                     <a
                       href={project.deployUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="project-cta font-body text-label-lg"
+                      className="project-preview-link"
+                      aria-label={`${content.projectCta.deploy} - ${project.title}`}
                     >
-                      <span>{content.projectCta.deploy}</span>
-                      <ArrowRight size={16} />
+                      {activeImageSrc ? (
+                        <img
+                          key={activeImageSrc}
+                          src={activeImageSrc}
+                          alt={`${project.title} (${currentSlide + 1}/${totalSlides})`}
+                          className="project-carousel-img"
+                          onError={() =>
+                            setFailedImages((prev) => ({
+                              ...prev,
+                              [activeImageSrc]: true,
+                            }))
+                          }
+                        />
+                      ) : (
+                        <div className="project-preview-grid">
+                          <Terminal
+                            size={28}
+                            style={{ color: 'var(--primary)', opacity: 0.9 }}
+                          />
+                          <span
+                            className="font-headline text-title-lg"
+                            style={{ color: 'var(--on-surface)' }}
+                          >
+                            {project.title}
+                          </span>
+                          {project.architectureNote && (
+                            <span
+                              className="font-label text-label-md"
+                              style={{
+                                color: 'var(--primary)',
+                                maxWidth: '38ch',
+                                lineHeight: 1.5,
+                              }}
+                            >
+                              {project.architectureNote}
+                            </span>
+                          )}
+                          <span
+                            className="font-label text-label-md"
+                            style={{
+                              color: 'var(--on-surface-variant)',
+                              marginTop: '0.25rem',
+                            }}
+                          >
+                            {project.deployUrl.replace(/^https?:\/\//, '')} ↗
+                          </span>
+                        </div>
+                      )}
                     </a>
 
-                    {project.repoUrl && (
-                      <a
-                        href={project.repoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="project-cta secondary font-body text-label-lg"
-                      >
-                        <span>{content.projectCta.repo}</span>
-                        <ArrowUpRight size={15} />
-                      </a>
+                    {totalSlides > 1 && (
+                      <>
+                        <button
+                          type="button"
+                          className="carousel-nav-btn prev"
+                          onClick={(e) =>
+                            handleSlideStep(e, project.id, totalSlides, -1)
+                          }
+                          aria-label={
+                            lang === 'en' ? 'Previous photo' : 'Foto anterior'
+                          }
+                          title={
+                            lang === 'en' ? 'Previous photo' : 'Foto anterior'
+                          }
+                        >
+                          <ChevronLeft size={18} />
+                        </button>
+
+                        <button
+                          type="button"
+                          className="carousel-nav-btn next"
+                          onClick={(e) =>
+                            handleSlideStep(e, project.id, totalSlides, 1)
+                          }
+                          aria-label={
+                            lang === 'en' ? 'Next photo' : 'Próxima foto'
+                          }
+                          title={lang === 'en' ? 'Next photo' : 'Próxima foto'}
+                        >
+                          <ChevronRight size={18} />
+                        </button>
+
+                        <div className="carousel-badge font-label text-label-md">
+                          {currentSlide + 1} / {totalSlides}
+                        </div>
+
+                        <div
+                          className="carousel-dots"
+                          role="tablist"
+                          aria-label={
+                            lang === 'en'
+                              ? 'Project photos navigation'
+                              : 'Navegação de fotos do projeto'
+                          }
+                        >
+                          {gallery.map((imgUrl, dotIdx) => (
+                            <button
+                              key={imgUrl}
+                              type="button"
+                              role="tab"
+                              aria-selected={dotIdx === currentSlide}
+                              aria-label={
+                                lang === 'en'
+                                  ? `Photo ${dotIdx + 1} of ${totalSlides}`
+                                  : `Foto ${dotIdx + 1} de ${totalSlides}`
+                              }
+                              className={`carousel-dot ${
+                                dotIdx === currentSlide ? 'active' : ''
+                              }`}
+                              onClick={(e) =>
+                                handleSlideSelect(e, project.id, dotIdx)
+                              }
+                            />
+                          ))}
+                        </div>
+                      </>
                     )}
                   </div>
-                </div>
-              </article>
-            ))}
+
+                  <div className="project-info">
+                    <span className="font-label text-label-md project-meta">
+                      {project.meta[lang]}
+                    </span>
+                    <h3 className="font-headline text-headline-md">
+                      {project.title}
+                    </h3>
+                    <p className="font-body text-body-md project-desc">
+                      {project.description[lang]}
+                    </p>
+                    <p className="font-label text-label-md project-tech">
+                      {project.stackLine[lang]}
+                    </p>
+                    <div className="project-links-row">
+                      <a
+                        href={project.deployUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="project-cta font-body text-label-lg"
+                      >
+                        <span>{content.projectCta.deploy}</span>
+                        <ArrowRight size={16} />
+                      </a>
+
+                      {project.repoUrl && (
+                        <a
+                          href={project.repoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="project-cta secondary font-body text-label-lg"
+                        >
+                          <span>{content.projectCta.repo}</span>
+                          <ArrowUpRight size={15} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </section>
 

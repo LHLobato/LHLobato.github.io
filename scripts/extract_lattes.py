@@ -13,8 +13,14 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 ASSETS_DIR = ROOT_DIR / "assets"
+PUBLIC_ASSETS_DIR = ROOT_DIR / "public" / "assets"
 SRC_JSON_PATH = ROOT_DIR / "src" / "data" / "lattesData.json"
 PUBLIC_JSON_PATH = ROOT_DIR / "public" / "lattes.json"
+SRC_PROJECTS_MANIFEST_PATH = ROOT_DIR / "src" / "data" / "projectImages.json"
+PUBLIC_PROJECTS_MANIFEST_PATH = ROOT_DIR / "public" / "projectImages.json"
+
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg", ".avif"}
+PROJECT_DIRS = ["projeto1", "projeto2", "projeto3"]
 
 SECTION_HEADERS = [
     "Biografia",
@@ -168,7 +174,58 @@ def parse_experiences(section_text: str) -> list[dict]:
     return experiences
 
 
+def sync_project_images() -> None:
+    import shutil
+
+    PUBLIC_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    # Sync root assets images
+    for item in ASSETS_DIR.iterdir():
+        if item.is_file() and item.suffix.lower() in IMAGE_EXTENSIONS:
+            shutil.copy2(item, PUBLIC_ASSETS_DIR / item.name)
+
+    manifest: dict[str, list[str]] = {}
+    for proj_dir in PROJECT_DIRS:
+        root_proj = ROOT_DIR / proj_dir
+        src_proj = ASSETS_DIR / proj_dir
+        pub_proj = PUBLIC_ASSETS_DIR / proj_dir
+        src_proj.mkdir(parents=True, exist_ok=True)
+        pub_proj.mkdir(parents=True, exist_ok=True)
+
+        # Copy from root/projetoX or assets/projetoX to public/assets/projetoX
+        if root_proj.exists() and root_proj.is_dir():
+            for item in sorted(root_proj.iterdir()):
+                if item.is_file() and item.suffix.lower() in IMAGE_EXTENSIONS:
+                    shutil.copy2(item, src_proj / item.name)
+                    shutil.copy2(item, pub_proj / item.name)
+
+        for item in sorted(src_proj.iterdir()):
+            if item.is_file() and item.suffix.lower() in IMAGE_EXTENSIONS:
+                shutil.copy2(item, pub_proj / item.name)
+        for item in sorted(pub_proj.iterdir()):
+            if item.is_file() and item.suffix.lower() in IMAGE_EXTENSIONS:
+                target_in_src = src_proj / item.name
+                if not target_in_src.exists():
+                    shutil.copy2(item, target_in_src)
+
+        images = [
+            f"./assets/{proj_dir}/{item.name}"
+            for item in sorted(pub_proj.iterdir())
+            if item.is_file() and item.suffix.lower() in IMAGE_EXTENSIONS
+        ]
+        manifest[proj_dir] = images
+
+    formatted_manifest = json.dumps(manifest, ensure_ascii=False, indent=2) + "\n"
+    SRC_PROJECTS_MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
+    SRC_PROJECTS_MANIFEST_PATH.write_text(formatted_manifest, encoding="utf-8")
+    PUBLIC_PROJECTS_MANIFEST_PATH.write_text(formatted_manifest, encoding="utf-8")
+    print(
+        f"[extract_lattes] Imagens sincronizadas para {', '.join(PROJECT_DIRS)}."
+    )
+
+
 def main() -> None:
+    sync_project_images()
+
     pdf_files = sorted(
         ASSETS_DIR.glob("*.pdf"), key=lambda p: p.stat().st_mtime, reverse=True
     )

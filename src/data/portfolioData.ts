@@ -1,6 +1,9 @@
+/// <reference types="vite/client" />
 import lattesGenerated from './lattesData.json';
+import projectImagesManifest from './projectImages.json';
 
 export type Language = 'en' | 'pt';
+export type ProjectFolder = 'projeto1' | 'projeto2' | 'projeto3';
 
 export interface SocialLinks {
   github: { handle: string; url: string };
@@ -25,6 +28,7 @@ export interface SkillColumn {
 export interface ProjectItem {
   id: string;
   category: 'ia-pesquisa' | 'backend-rag' | 'web';
+  folder: ProjectFolder;
   meta: { en: string; pt: string };
   title: string;
   description: { en: string; pt: string };
@@ -32,6 +36,7 @@ export interface ProjectItem {
   deployUrl: string;
   repoUrl?: string;
   imageUrl?: string;
+  images?: string[];
   architectureNote?: string;
 }
 
@@ -300,14 +305,69 @@ export const LOCALIZED_CONTENT: Record<Language, LocalizedProfileContent> = {
   },
 };
 
+const BUNDLED_PROJECT_IMAGES: Record<ProjectFolder, string[]> = {
+  projeto1: [],
+  projeto2: [],
+  projeto3: [],
+};
+
+const rawGlobModules = import.meta.glob(
+  [
+    '../../assets/projeto1/*.{png,jpg,jpeg,webp,gif,svg,avif,PNG,JPG,JPEG,WEBP,GIF,SVG,AVIF}',
+    '../../assets/projeto2/*.{png,jpg,jpeg,webp,gif,svg,avif,PNG,JPG,JPEG,WEBP,GIF,SVG,AVIF}',
+    '../../assets/projeto3/*.{png,jpg,jpeg,webp,gif,svg,avif,PNG,JPG,JPEG,WEBP,GIF,SVG,AVIF}',
+    '../../projeto1/*.{png,jpg,jpeg,webp,gif,svg,avif,PNG,JPG,JPEG,WEBP,GIF,SVG,AVIF}',
+    '../../projeto2/*.{png,jpg,jpeg,webp,gif,svg,avif,PNG,JPG,JPEG,WEBP,GIF,SVG,AVIF}',
+    '../../projeto3/*.{png,jpg,jpeg,webp,gif,svg,avif,PNG,JPG,JPEG,WEBP,GIF,SVG,AVIF}',
+  ],
+  { eager: true, import: 'default' }
+) as Record<string, string>;
+
+Object.keys(rawGlobModules)
+  .sort()
+  .forEach((filePath) => {
+    const url = rawGlobModules[filePath];
+    (['projeto1', 'projeto2', 'projeto3'] as ProjectFolder[]).forEach((folder) => {
+      if (filePath.includes(`/${folder}/`) && !BUNDLED_PROJECT_IMAGES[folder].includes(url)) {
+        BUNDLED_PROJECT_IMAGES[folder].push(url);
+      }
+    });
+  });
+
+const manifestRecord = projectImagesManifest as Record<ProjectFolder, string[]>;
+
+export function getProjectImages(
+  folder: ProjectFolder,
+  fallbackImages?: string[],
+  fallbackSingle?: string
+): string[] {
+  const fromManifest = manifestRecord?.[folder] ?? [];
+  if (fromManifest.length > 0) {
+    return fromManifest;
+  }
+  const fromGlob = BUNDLED_PROJECT_IMAGES[folder] ?? [];
+  if (fromGlob.length > 0) {
+    return fromGlob;
+  }
+  if (fallbackImages && fallbackImages.length > 0) {
+    return fallbackImages;
+  }
+  if (fallbackSingle) {
+    return [fallbackSingle];
+  }
+  return [];
+}
+
 /**
  * PROJETOS
- * Adicione novos objetos a este array para publicar mais projetos no portfólio.
+ * As imagens de cada card são carregadas automaticamente dos diretórios:
+ * "projeto1", "projeto2" e "projeto3" (dentro de /assets ou /public/assets).
  */
 export const PROJECTS: ProjectItem[] = [
   {
     id: 'animeletron',
     category: 'ia-pesquisa',
+    folder: 'projeto1',
     meta: {
       en: 'COMPUTER VISION • EFFICIENTNET • ONNX WEB INFERENCE',
       pt: 'VISÃO COMPUTACIONAL • EFFICIENTNET • ONNX WEB INFERENCE',
@@ -323,9 +383,32 @@ export const PROJECTS: ProjectItem[] = [
     },
     deployUrl: 'https://lhlobato.github.io/what_anime_is_it_from/',
     repoUrl: 'https://github.com/LHLobato/what_anime_is_it_from',
-    imageUrl: './assets/animeletron.jpg',
+    imageUrl: './assets/projeto1/animeletron.jpg',
     architectureNote:
       'Pinterest Dataset ➔ EfficientNet Training ➔ ONNX Quantization/Export ➔ In-Browser Inference',
+  },
+  {
+    id: 'rag-chat',
+    category: 'backend-rag',
+    folder: 'projeto2',
+    meta: {
+      en: 'RAG SYSTEM • FAISS & RRF • GEMINI 3.5-FLASH-LITE',
+      pt: 'SISTEMA RAG • FAISS & RRF • GEMINI 3.5-FLASH-LITE',
+    },
+    title: 'RAG Chat',
+    description: {
+      en: 'A Retrieval-Augmented Generation platform powered by Gemini 3.5-flash-lite. The platform ingests documents, splits them into chunks, generates embeddings for both the chunks and the user query using Google Embeddings, applies cosine similarity and Reciprocal Rank Fusion (RRF) via FAISS to retrieve the top 5 most similar chunks, and sends them along with the question to Gemini.',
+      pt: 'Plataforma de RAG utilizando o modelo Gemini 3.5-flash-lite, onde o sistema recebe documentos, divide em chunks, gera embeddings para as chunks e para a pergunta do usuário com Google Embeddings, aplica similaridade de cosseno e RRF (Reciprocal Rank Fusion) para recuperar as top 5 chunks mais similares e as envia junto com a pergunta para o Gemini.',
+    },
+    stackLine: {
+      en: 'FAISS · Google Embeddings · Gemini API (Gemini 3.5-flash-lite) · React + TypeScript',
+      pt: 'FAISS · Google Embeddings · Gemini API (Gemini 3.5-flash-lite) · React + TypeScript',
+    },
+    deployUrl: 'https://github.com/LHLobato',
+    repoUrl: 'https://github.com/LHLobato',
+    imageUrl: './assets/projeto2/Pasted image.png',
+    architectureNote:
+      'Document Chunking ➔ Google Embeddings ➔ FAISS + Cosine Similarity & RRF (Top-5) ➔ Gemini 3.5-flash-lite',
   },
 ];
 

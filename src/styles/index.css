@@ -611,6 +611,124 @@ body {
   border-color: var(--primary);
 }
 
+.project-preview-link {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.project-carousel-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 6px;
+  animation: carouselFadeIn 220ms ease-out;
+}
+
+@keyframes carouselFadeIn {
+  from {
+    opacity: 0.35;
+    transform: scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.carousel-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--outline-variant);
+  background-color: color-mix(in srgb, var(--surface) 84%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: var(--on-surface);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 150ms ease-out, color 150ms ease-out,
+    background-color 150ms ease-out, transform 150ms ease-out;
+}
+
+.carousel-nav-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background-color: var(--surface-low);
+  transform: translateY(-50%) scale(1.06);
+}
+
+.carousel-nav-btn.prev {
+  left: 0.85rem;
+}
+
+.carousel-nav-btn.next {
+  right: 0.85rem;
+}
+
+.carousel-badge {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 5;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--outline-variant);
+  background-color: color-mix(in srgb, var(--surface) 84%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: var(--on-surface);
+  pointer-events: none;
+}
+
+.carousel-dots {
+  position: absolute;
+  bottom: 0.85rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--outline-variant);
+  background-color: color-mix(in srgb, var(--surface) 84%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--outline);
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 150ms ease-out, transform 150ms ease-out,
+    width 150ms ease-out;
+}
+
+.carousel-dot:hover {
+  background-color: var(--on-surface-variant);
+}
+
+.carousel-dot.active {
+  background-color: var(--primary);
+  width: 18px;
+  border-radius: 999px;
+}
+
 .project-preview-grid {
   width: 100%;
   height: 100%;
