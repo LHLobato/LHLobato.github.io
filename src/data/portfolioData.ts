@@ -3,7 +3,7 @@ import lattesGenerated from './lattesData.json';
 import projectImagesManifest from './projectImages.json';
 
 export type Language = 'en' | 'pt';
-export type ProjectFolder = 'projeto1' | 'projeto2' | 'projeto3';
+export type ProjectFolder = 'projeto1' | 'projeto2' | 'projeto3' | 'projeto4';
 
 export interface SocialLinks {
   github: { handle: string; url: string };
@@ -309,6 +309,7 @@ const BUNDLED_PROJECT_IMAGES: Record<ProjectFolder, string[]> = {
   projeto1: [],
   projeto2: [],
   projeto3: [],
+  projeto4: [],
 };
 
 const rawGlobModules = import.meta.glob(
@@ -316,9 +317,11 @@ const rawGlobModules = import.meta.glob(
     '../../assets/projeto1/*.{png,jpg,jpeg,webp,gif,svg,avif,PNG,JPG,JPEG,WEBP,GIF,SVG,AVIF}',
     '../../assets/projeto2/*.{png,jpg,jpeg,webp,gif,svg,avif,PNG,JPG,JPEG,WEBP,GIF,SVG,AVIF}',
     '../../assets/projeto3/*.{png,jpg,jpeg,webp,gif,svg,avif,PNG,JPG,JPEG,WEBP,GIF,SVG,AVIF}',
+    '../../assets/projeto4/*.{png,jpg,jpeg,webp,gif,svg,avif,PNG,JPG,JPEG,WEBP,GIF,SVG,AVIF}',
     '../../projeto1/*.{png,jpg,jpeg,webp,gif,svg,avif,PNG,JPG,JPEG,WEBP,GIF,SVG,AVIF}',
     '../../projeto2/*.{png,jpg,jpeg,webp,gif,svg,avif,PNG,JPG,JPEG,WEBP,GIF,SVG,AVIF}',
     '../../projeto3/*.{png,jpg,jpeg,webp,gif,svg,avif,PNG,JPG,JPEG,WEBP,GIF,SVG,AVIF}',
+    '../../projeto4/*.{png,jpg,jpeg,webp,gif,svg,avif,PNG,JPG,JPEG,WEBP,GIF,SVG,AVIF}',
   ],
   { eager: true, import: 'default' }
 ) as Record<string, string>;
@@ -327,8 +330,13 @@ Object.keys(rawGlobModules)
   .sort()
   .forEach((filePath) => {
     const url = rawGlobModules[filePath];
-    (['projeto1', 'projeto2', 'projeto3'] as ProjectFolder[]).forEach((folder) => {
-      if (filePath.includes(`/${folder}/`) && !BUNDLED_PROJECT_IMAGES[folder].includes(url)) {
+    (
+      ['projeto1', 'projeto2', 'projeto3', 'projeto4'] as ProjectFolder[]
+    ).forEach((folder) => {
+      if (
+        filePath.includes(`/${folder}/`) &&
+        !BUNDLED_PROJECT_IMAGES[folder].includes(url)
+      ) {
         BUNDLED_PROJECT_IMAGES[folder].push(url);
       }
     });
@@ -361,7 +369,7 @@ export function getProjectImages(
 /**
  * PROJETOS
  * As imagens de cada card são carregadas automaticamente dos diretórios:
- * "projeto1", "projeto2" e "projeto3" (dentro de /assets ou /public/assets).
+ * "projeto1", "projeto2", "projeto3" e "projeto4" (dentro de /assets ou /public/assets).
  */
 export const PROJECTS: ProjectItem[] = [
   {
@@ -383,7 +391,7 @@ export const PROJECTS: ProjectItem[] = [
     },
     deployUrl: 'https://lhlobato.github.io/what_anime_is_it_from/',
     repoUrl: 'https://github.com/LHLobato/what_anime_is_it_from',
-    imageUrl: './assets/projeto1/animeletron.jpg',
+    imageUrl: './assets/projeto1/01-animeletron-home.png',
     architectureNote:
       'Pinterest Dataset ➔ EfficientNet Training ➔ ONNX Quantization/Export ➔ In-Browser Inference',
   },
@@ -406,9 +414,32 @@ export const PROJECTS: ProjectItem[] = [
     },
     deployUrl: 'https://github.com/LHLobato',
     repoUrl: 'https://github.com/LHLobato',
-    imageUrl: './assets/projeto2/Pasted image.png',
+    imageUrl: './assets/projeto2/01-rag-chat-dashboard.png',
     architectureNote:
       'Document Chunking ➔ Google Embeddings ➔ FAISS + Cosine Similarity & RRF (Top-5) ➔ Gemini 3.5-flash-lite',
+  },
+  {
+    id: 'pullsegym',
+    category: 'web',
+    folder: 'projeto4',
+    meta: {
+      en: 'RESPONSIVE LANDING PAGE • CLOUDFLARE WORKERS • WEB',
+      pt: 'LANDING PAGE RESPONSIVA • CLOUDFLARE WORKERS • WEB',
+    },
+    title: 'Pulse Fitness (PullseGym)',
+    description: {
+      en: 'Responsive landing page for a fictional gym featuring membership plan comparisons, photo gallery, operating hours, interactive Google Maps location, and direct WhatsApp contact integration, optimized for both desktop and mobile devices.',
+      pt: 'Landing page responsiva (desktop e mobile) para uma academia fictícia, com apresentação e comparativo de planos, galeria do espaço, quadro de horários, localização integrada ao Google Maps e contato direto via WhatsApp.',
+    },
+    stackLine: {
+      en: 'Responsive Web Design · Mobile-First · Google Maps · WhatsApp Integration · Cloudflare Workers',
+      pt: 'Design Responsivo (Mobile & Desktop) · Google Maps · Integração WhatsApp · Cloudflare Workers',
+    },
+    deployUrl: 'https://pullsegym.luislobato35.workers.dev/',
+    repoUrl: 'https://github.com/LHLobato/pullsegym',
+    imageUrl: './assets/projeto4/01-pullsegym-hero.png',
+    architectureNote:
+      'Responsive UI (Desktop & Mobile) ➔ Plan Comparison & Gallery ➔ Maps & WhatsApp CTA ➔ Cloudflare Workers Edge Deploy',
   },
 ];
 

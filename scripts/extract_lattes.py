@@ -20,7 +20,7 @@ SRC_PROJECTS_MANIFEST_PATH = ROOT_DIR / "src" / "data" / "projectImages.json"
 PUBLIC_PROJECTS_MANIFEST_PATH = ROOT_DIR / "public" / "projectImages.json"
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg", ".avif"}
-PROJECT_DIRS = ["projeto1", "projeto2", "projeto3"]
+PROJECT_DIRS = ["projeto1", "projeto2", "projeto3", "projeto4"]
 
 SECTION_HEADERS = [
     "Biografia",
@@ -197,6 +197,21 @@ def sync_project_images() -> None:
                 if item.is_file() and item.suffix.lower() in IMAGE_EXTENSIONS:
                     shutil.copy2(item, src_proj / item.name)
                     shutil.copy2(item, pub_proj / item.name)
+
+        # Clean stale files in public/assets/projetoX that no longer exist in assets/projetoX
+        src_file_names = {
+            item.name
+            for item in src_proj.iterdir()
+            if item.is_file() and item.suffix.lower() in IMAGE_EXTENSIONS
+        }
+        if src_file_names:
+            for pub_item in list(pub_proj.iterdir()):
+                if (
+                    pub_item.is_file()
+                    and pub_item.suffix.lower() in IMAGE_EXTENSIONS
+                    and pub_item.name not in src_file_names
+                ):
+                    pub_item.unlink()
 
         for item in sorted(src_proj.iterdir()):
             if item.is_file() and item.suffix.lower() in IMAGE_EXTENSIONS:
