@@ -1,0 +1,18 @@
+{
+  "projeto1": [
+    "./assets/projeto1/01-animeletron-home.png",
+    "./assets/projeto1/02-animeletron-resultado.jpg"
+  ],
+  "projeto2": [
+    "./assets/projeto2/01-rag-chat-dashboard.png",
+    "./assets/projeto2/02-rag-chat-resposta.png"
+  ],
+  "projeto3": [],
+  "projeto4": [
+    "./assets/projeto4/01-pullsegym-hero.png",
+    "./assets/projeto4/02-pullsegym-planos.png",
+    "./assets/projeto4/03-pullsegym-galeria.png",
+    "./assets/projeto4/04-pullsegym-horarios.png",
+    "./assets/projeto4/05-pullsegym-localizacao.png"
+  ]
+}
