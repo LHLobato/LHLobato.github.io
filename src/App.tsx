@@ -14,6 +14,12 @@ import {
   Languages,
   ChevronLeft,
   ChevronRight,
+  Globe,
+  Code2,
+  BrainCircuit,
+  BarChart3,
+  Database,
+  Server,
 } from 'lucide-react';
 import {
   PROFILE_META,
@@ -25,6 +31,7 @@ import {
   ExperienceRow,
   ProjectItem,
   ProjectFolder,
+  SkillIconKey,
   getProjectImages,
 } from './data/portfolioData';
 
@@ -34,14 +41,14 @@ type FilterCategory = 'todos' | 'backend-rag' | 'ia-pesquisa' | 'web';
 
 const TARDIS_QUOTES: Record<Language, string[]> = {
   en: [
-    '“People assume that time is a strict progression of cause to effect, but actually—from a non-linear, non-subjective viewpoint—it’s more like a big ball of wibbly-wobbly, timey-wimey... stuff.”',
+    '“People assume that time is a strict progression of cause to effect, but actually, from a non-linear, non-subjective viewpoint, it is more like a big ball of wibbly-wobbly, timey-wimey... stuff.”',
     '“Allons-y! Every well-designed AI architecture is bigger on the inside than it looks on the diagram.”',
-    '“Never cruel or cowardly. Never give up, never give in.” — 12th Doctor (Coords: Gallifrey 10-0-11-0-0 by 0-2)',
+    '“Never cruel or cowardly. Never give up, never give in.” (12th Doctor · Gallifrey 10-0-11-0-0 by 0-2)',
   ],
   pt: [
-    '“People assume that time is a strict progression of cause to effect, but actually—from a non-linear, non-subjective viewpoint—it’s more like a big ball of wibbly-wobbly, timey-wimey... stuff.”',
+    '“People assume that time is a strict progression of cause to effect, but actually, from a non-linear, non-subjective viewpoint, it is more like a big ball of wibbly-wobbly, timey-wimey... stuff.”',
     '“Allons-y! Toda arquitetura de IA bem projetada é maior por dentro do que parece no diagrama.”',
-    '“Never cruel or cowardly. Never give up, never give in.” — 12th Doctor (Coordenadas: Gallifrey 10-0-11-0-0 by 0-2)',
+    '“Never cruel or cowardly. Never give up, never give in.” (12th Doctor · Coordenadas: Gallifrey 10-0-11-0-0 by 0-2)',
   ],
 };
 
@@ -80,7 +87,7 @@ async function resolveOnlineLattesUrl(): Promise<string> {
 
 function localizeExperience(exp: ExperienceRow, lang: Language): ExperienceRow {
   if (lang === 'pt') return exp;
-  let title = exp.title.replace(
+  const title = exp.title.replace(
     'Bolsista de Iniciação Científica',
     'Undergraduate Research Fellow'
   );
@@ -95,8 +102,24 @@ function localizeExperience(exp: ExperienceRow, lang: Language): ExperienceRow {
   return { ...exp, title, description };
 }
 
+function renderSkillIcon(icon: SkillIconKey) {
+  switch (icon) {
+    case 'web':
+      return <Globe size={20} />;
+    case 'software':
+      return <Code2 size={20} />;
+    case 'ai':
+      return <BrainCircuit size={20} />;
+    case 'data':
+      return <BarChart3 size={20} />;
+    case 'database':
+      return <Database size={20} />;
+    case 'devops':
+      return <Server size={20} />;
+  }
+}
+
 export const App: React.FC = () => {
-  // Default language: 'en' (English) as requested
   const [lang, setLang] = useState<Language>(() => {
     const saved = localStorage.getItem('lhlobato-lang') as Language | null;
     if (saved === 'en' || saved === 'pt') return saved;
@@ -118,13 +141,12 @@ export const App: React.FC = () => {
   const [slideIndices, setSlideIndices] = useState<Record<string, number>>({});
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
-  // Resident Evil ECG & Save Room Easter Egg State
+  // Minimalist Easter Egg State
   const [vitality, setVitality] = useState<VitalityState>('FINE');
   const [inkRibbons, setInkRibbons] = useState<number>(3);
   const [starsModalOpen, setStarsModalOpen] = useState<boolean>(false);
   const [starsSavedOnce, setStarsSavedOnce] = useState<boolean>(false);
 
-  // Doctor Who TARDIS Easter Egg State
   const [tardisModalOpen, setTardisModalOpen] = useState<boolean>(false);
   const [tardisQuoteIdx, setTardisQuoteIdx] = useState<number>(0);
   const [tardisMaterializing, setTardisMaterializing] = useState<boolean>(false);
@@ -173,10 +195,12 @@ export const App: React.FC = () => {
       .catch(() => {});
   }, []);
 
-  const resolveGalleryForProject = (project: ProjectItem, index: number): string[] => {
+  const resolveGalleryForProject = (
+    project: ProjectItem,
+    index: number
+  ): string[] => {
     const folder: ProjectFolder =
-      project.folder ||
-      ((`projeto${(index % 3) + 1}`) as ProjectFolder);
+      project.folder || (`projeto${(index % 4) + 1}` as ProjectFolder);
     const dynamicFromFetch = projectImagesMap[folder];
     const baseList =
       dynamicFromFetch && dynamicFromFetch.length > 0
@@ -234,14 +258,11 @@ export const App: React.FC = () => {
           setVitality('FINE');
           setQuickBanner({
             type: 'RE',
-            title:
-              lang === 'en'
-                ? 'GREEN HERB USED // STATUS: FINE'
-                : 'GREEN HERB UTILIZADA // STATUS: FINE',
+            title: 'STATUS: FINE',
             message:
               lang === 'en'
-                ? 'Vital condition restored to 100%. "Nothing dies down here." (Raccoon City, 1998)'
-                : 'Condição vital restaurada para 100%. "Nothing dies down here." (Raccoon City, 1998)',
+                ? 'Green Herb applied. Vital condition restored.'
+                : 'Green Herb utilizada. Condição vital restaurada.',
           });
           buffer = '';
         }
@@ -261,10 +282,12 @@ export const App: React.FC = () => {
 
   const triggerTardisEffect = () => {
     setTardisMaterializing(true);
-    setTimeout(() => setTardisMaterializing(false), 1500);
+    setTimeout(() => setTardisMaterializing(false), 1200);
   };
 
-  const handleLattesRedirect = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleLattesRedirect = async (
+    e: React.MouseEvent<HTMLAnchorElement>
+  ) => {
     e.preventDefault();
     if (checkingLattes) return;
 
@@ -285,37 +308,10 @@ export const App: React.FC = () => {
   const cycleVitality = () => {
     if (vitality === 'FINE') {
       setVitality('CAUTION');
-      setQuickBanner({
-        type: 'RE',
-        title: 'R.P.D. BIO-MONITOR // STATUS: CAUTION',
-        message:
-          lang === 'en'
-            ? '“Itchy. Tasty...” — Keeper’s Diary (Spencer Mansion, 1998). Click again or type "herb" to heal.'
-            : '“Itchy. Tasty...” — Diário do Guardião (Spencer Mansion, 1998). Clique novamente ou digite "herb" para curar.',
-      });
     } else if (vitality === 'CAUTION') {
       setVitality('DANGER');
-      setQuickBanner({
-        type: 'RE',
-        title: 'R.P.D. BIO-MONITOR // STATUS: DANGER',
-        message:
-          lang === 'en'
-            ? '“You want S.T.A.R.S.? I’ll give you S.T.A.R.S.!” — Jill Valentine. Click once more to apply Mixed Herb (G+R).'
-            : '“You want S.T.A.R.S.? I’ll give you S.T.A.R.S.!” — Jill Valentine. Clique mais uma vez para usar Mixed Herb (G+R).',
-      });
     } else {
       setVitality('FINE');
-      setQuickBanner({
-        type: 'RE',
-        title:
-          lang === 'en'
-            ? 'MIXED HERB (G+R) APPLIED // STATUS: FINE'
-            : 'MIXED HERB (G+R) APLICADA // STATUS: FINE',
-        message:
-          lang === 'en'
-            ? 'Vital signs stabilized. Tip: you can also type "stars" or "tardis" on your keyboard anytime.'
-            : 'Sinais vitais estabilizados. Dica: você também pode digitar "stars" ou "tardis" no teclado a qualquer momento.',
-      });
     }
   };
 
@@ -357,14 +353,16 @@ export const App: React.FC = () => {
 
   const starsModalText = !starsSavedOnce
     ? lang === 'en'
-      ? 'You entered the Spencer Mansion Save Room. There is an old typewriter on the desk and a Mixed Herb (G+R) next to the PyTorch inference server.'
-      : 'Você entrou na Save Room da Mansão Spencer. Há uma máquina de escrever antiga sobre a mesa e uma mistura de ervas (G+R) ao lado do servidor de inferência PyTorch.'
+      ? 'Spencer Mansion Save Room. An old typewriter sits on the desk next to the PyTorch inference server.'
+      : 'Save Room da Mansão Spencer. Há uma máquina de escrever sobre a mesa ao lado do servidor PyTorch.'
     : lang === 'en'
-    ? `Progress recorded on the Spencer Mansion typewriter. The embeddings and PyTorch server remains protected against the T-Virus. (Ink Ribbons left: 0${inkRibbons})`
-    : `Progresso gravado na máquina de escrever da Mansão Spencer. O servidor de embeddings e modelos PyTorch está protegido contra o T-Virus. (Ink Ribbons restantes: 0${inkRibbons})`;
+    ? `Session saved on the typewriter. (Ink Ribbons left: 0${inkRibbons})`
+    : `Sessão gravada na máquina de escrever. (Ink Ribbons restantes: 0${inkRibbons})`;
 
   return (
-    <div className={`page-wrapper ${tardisMaterializing ? 'tardis-vworp' : ''}`}>
+    <div
+      className={`page-wrapper ${tardisMaterializing ? 'tardis-vworp' : ''}`}
+    >
       {/* Minimalist Sticky Header */}
       <header className="site-header">
         <div className="max-container header-inner">
@@ -389,16 +387,17 @@ export const App: React.FC = () => {
             </nav>
 
             <div className="header-controls">
-              {/* Resident Evil ECG Vitality Indicator */}
+              {/* Minimalist ECG status pill */}
               <button
                 type="button"
                 onClick={cycleVitality}
                 className={`ecg-btn font-label text-label-md ${ecgClass}`}
-                title="R.P.D. Bio-Monitor (Resident Evil Easter Egg)"
+                title={`Status: ${vitality}`}
+                aria-label={`Vitality status: ${vitality}`}
               >
                 <span className="ecg-dot" />
                 <Activity size={13} />
-                <span>ECG:{vitality}</span>
+                <span className="ecg-label">{vitality}</span>
               </button>
 
               {/* Language Switcher EN / PT */}
@@ -434,7 +433,7 @@ export const App: React.FC = () => {
                     style={{
                       color:
                         lang === 'pt'
-                          ? 'var(--primary)'
+                          ? 'var(--accent-green)'
                           : 'var(--on-surface-variant)',
                     }}
                   >
@@ -464,7 +463,6 @@ export const App: React.FC = () => {
       </header>
 
       <main id="topo" className="max-container main-content">
-        {/* Quick Telemetry Notification when ECG or keyboard easter egg triggers */}
         {quickBanner && (
           <div
             className={`telemetry-banner ${
@@ -472,20 +470,24 @@ export const App: React.FC = () => {
             }`}
             role="status"
           >
-            <div>
-              <div
+            <div className="telemetry-inline">
+              <span
                 className="font-label text-label-md"
                 style={{
                   color:
-                    quickBanner.type === 'RE' ? 'var(--re-fine)' : 'var(--primary)',
-                  marginBottom: '0.25rem',
+                    quickBanner.type === 'RE'
+                      ? 'var(--re-fine)'
+                      : 'var(--primary)',
                 }}
               >
                 {quickBanner.title}
-              </div>
-              <p className="font-body text-body-md" style={{ color: 'var(--on-surface)' }}>
+              </span>
+              <span
+                className="font-body text-body-md"
+                style={{ color: 'var(--on-surface)' }}
+              >
                 {quickBanner.message}
-              </p>
+              </span>
             </div>
             <button
               type="button"
@@ -493,7 +495,7 @@ export const App: React.FC = () => {
               className="telemetry-close font-label text-label-md"
               aria-label="Close"
             >
-              {lang === 'en' ? 'close' : 'fechar'}
+              ×
             </button>
           </div>
         )}
@@ -502,6 +504,7 @@ export const App: React.FC = () => {
         <section aria-labelledby="hero-title" className="hero-grid">
           <div className="hero-left">
             <p className="font-label text-label-md hero-kicker">
+              <span className="kicker-dot" />
               {content.kicker}
             </p>
             <h1 id="hero-title" className="font-display text-display-lg">
@@ -512,15 +515,22 @@ export const App: React.FC = () => {
             </p>
 
             <div className="hero-actions">
-              <a href="#projetos" className="btn-primary font-body text-label-lg">
+              <a
+                href="#projetos"
+                className="btn-primary font-body text-label-lg"
+              >
                 <span>{content.ctaProjects}</span>
+                <ArrowRight size={16} />
               </a>
-              <a href="#artigos" className="btn-secondary font-body text-label-lg">
+              <a
+                href="#artigos"
+                className="btn-secondary font-body text-label-lg"
+              >
                 <span>{content.ctaArticles}</span>
               </a>
             </div>
 
-            {/* Social profiles: GitHub (LHLobato), LinkedIn (lhs-lobato), Instagram (lhs.lobato) & Lattes */}
+            {/* Social profiles */}
             <div className="social-links-row font-label">
               <a
                 href={PROFILE_META.socials.github.url}
@@ -587,7 +597,11 @@ export const App: React.FC = () => {
         </section>
 
         {/* 01 / ABOUT ME & EXPERIENCE */}
-        <section id="sobre" aria-labelledby="sobre-title" className="section-hairline">
+        <section
+          id="sobre"
+          aria-labelledby="sobre-title"
+          className="section-hairline"
+        >
           <div className="section-col-left">
             <span className="font-label text-label-md section-index">
               {content.sections.aboutIndex}
@@ -622,36 +636,56 @@ export const App: React.FC = () => {
           </div>
         </section>
 
-        {/* 02 / SKILLS */}
-        <section id="skills" aria-labelledby="skills-title" className="section-hairline">
-          <div className="section-col-left">
-            <span className="font-label text-label-md section-index">
-              {content.sections.skillsIndex}
-            </span>
-            <h2 id="skills-title" className="font-headline text-headline-lg">
-              {content.sections.skillsTitle}
-            </h2>
-          </div>
-
-          <div className="section-col-right">
-            <p className="font-body text-body-md skills-lead-box">
+        {/* 02 / SKILLS & TECHNOLOGIES (Grid of Boxes with Icons) */}
+        <section
+          id="skills"
+          aria-labelledby="skills-title"
+          className="skills-section"
+        >
+          <div className="skills-header">
+            <div className="skills-header-titles">
+              <span className="font-label text-label-md section-index accent-green-text">
+                {content.sections.skillsIndex}
+              </span>
+              <h2 id="skills-title" className="font-headline text-headline-lg">
+                {content.sections.skillsTitle}
+              </h2>
+            </div>
+            <p className="font-body text-body-md skills-lead-text">
               {content.skillsLead}
             </p>
+          </div>
 
-            <div className="skills-matrix">
-              {content.skillColumns.map((col) => (
-                <div key={col.title} className="skill-col">
-                  <h3 className="font-title text-title-lg skill-col-title">
-                    {col.title}
-                  </h3>
-                  <ul className="skill-ul font-body text-body-md">
-                    {col.items.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
+          <div className="skills-boxes-grid">
+            {content.skillBoxes.map((box) => (
+              <article
+                key={box.id}
+                className={`skill-box-card accent-${box.accent}`}
+              >
+                <div className="skill-box-top">
+                  <div className={`skill-icon-badge accent-${box.accent}`}>
+                    {renderSkillIcon(box.icon)}
+                  </div>
+                  <div className="skill-box-titles">
+                    <h3 className="font-headline text-title-lg">
+                      {box.title}
+                    </h3>
+                    <span className="font-label text-label-md skill-box-sub">
+                      {box.subtitle}
+                    </span>
+                  </div>
                 </div>
-              ))}
-            </div>
+
+                <ul className="skill-box-list font-body text-body-md">
+                  {box.items.map((item) => (
+                    <li key={item} className="skill-box-item">
+                      <span className="skill-item-bullet" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -662,16 +696,29 @@ export const App: React.FC = () => {
           className="projects-section"
         >
           <div className="projects-header">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.35rem',
+              }}
+            >
               <span className="font-label text-label-md section-index">
                 {content.sections.projectsIndex}
               </span>
-              <h2 id="projetos-title" className="font-headline text-headline-lg">
+              <h2
+                id="projetos-title"
+                className="font-headline text-headline-lg"
+              >
                 {content.sections.projectsTitle}
               </h2>
             </div>
 
-            <div className="filter-tabs" role="group" aria-label="Filter projects">
+            <div
+              className="filter-tabs"
+              role="group"
+              aria-label="Filter projects"
+            >
               {(
                 [
                   { id: 'todos', label: content.filters.todos },
@@ -881,10 +928,14 @@ export const App: React.FC = () => {
           </div>
         </section>
 
-        {/* 04 / SCIENTIFIC ARTICLES (Static / Non-clickable) */}
-        <section id="artigos" aria-labelledby="artigos-title" className="section-hairline">
+        {/* 04 / SCIENTIFIC ARTICLES */}
+        <section
+          id="artigos"
+          aria-labelledby="artigos-title"
+          className="section-hairline"
+        >
           <div className="section-col-left">
-            <span className="font-label text-label-md section-index">
+            <span className="font-label text-label-md section-index accent-green-text">
               {content.sections.articlesIndex}
             </span>
             <h2 id="artigos-title" className="font-headline text-headline-lg">
@@ -896,12 +947,18 @@ export const App: React.FC = () => {
             <div className="articles-index">
               {lattesData.articles.map((article) => (
                 <article key={article.id} className="article-row">
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.35rem',
+                    }}
+                  >
                     <h3 className="font-title text-title-md article-row-title">
                       {article.title}
                     </h3>
                     <span className="font-label text-label-md article-row-meta">
-                      {article.year} • {article.event}
+                      {article.year} • {article.event.replace(/\s*—\s*/g, ' · ')}
                     </span>
                     {article.authors && (
                       <span
@@ -919,7 +976,7 @@ export const App: React.FC = () => {
         </section>
       </main>
 
-      {/* Clean Footer with Dual Easter Egg Triggers */}
+      {/* Clean Footer with Minimalist Easter Egg Triggers */}
       <footer className="site-footer">
         <div className="max-container footer-inner">
           <p className="font-body text-body-md footer-copy">
@@ -934,13 +991,9 @@ export const App: React.FC = () => {
                 setTardisModalOpen(true);
               }}
               className="footer-trigger-btn"
-              title={
-                lang === 'en'
-                  ? "Open TARDIS Console (or type 'tardis')"
-                  : "Abrir Console TARDIS (ou digite 'tardis')"
-              }
+              title="TARDIS Console"
             >
-              TARDIS // 10-0-11-00:02 (Bad Wolf)
+              TARDIS
             </button>
             <span style={{ color: 'var(--outline)' }} aria-hidden="true">
               ·
@@ -949,19 +1002,15 @@ export const App: React.FC = () => {
               type="button"
               onClick={() => setStarsModalOpen(true)}
               className="footer-trigger-btn"
-              title={
-                lang === 'en'
-                  ? "Open S.T.A.R.S. Save Room (or type 'stars')"
-                  : "Abrir Save Room S.T.A.R.S. (ou digite 'stars')"
-              }
+              title="S.T.A.R.S. Save Room"
             >
-              S.T.A.R.S. // Spencer Mansion 1998 (Ink Ribbon x0{inkRibbons})
+              S.T.A.R.S. (0{inkRibbons})
             </button>
           </div>
         </div>
       </footer>
 
-      {/* Easter Egg Modal #1: Doctor Who (TARDIS Type 40 Console) */}
+      {/* Minimalist Easter Egg Modal #1: Doctor Who */}
       {tardisModalOpen && (
         <div
           className="modal-backdrop"
@@ -972,10 +1021,8 @@ export const App: React.FC = () => {
         >
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <header className="modal-header">
-              <h3 id="tardis-title" className="font-headline text-headline-md">
-                {lang === 'en'
-                  ? 'TARDIS Console — Type 40'
-                  : 'Console TARDIS — Tipo 40'}
+              <h3 id="tardis-title" className="font-headline text-title-lg">
+                TARDIS · Type 40
               </h3>
               <button
                 type="button"
@@ -983,13 +1030,9 @@ export const App: React.FC = () => {
                 aria-label="Close TARDIS console"
                 className="modal-close-btn"
               >
-                <X size={16} />
+                <X size={15} />
               </button>
             </header>
-
-            <p className="font-label text-label-md modal-kicker">
-              SIGNAL: BAD WOLF • GALLIFREY_COORDS: 10-0-11-00-02 • BIGGER ON THE INSIDE
-            </p>
 
             <p className="font-body text-body-md modal-quote">
               {TARDIS_QUOTES[lang][tardisQuoteIdx]}
@@ -997,22 +1040,21 @@ export const App: React.FC = () => {
 
             <div className="modal-footer-box">
               <span className="font-label text-label-md">
-                Sonic Screwdriver: {432 + tardisQuoteIdx * 108} Hz{' '}
-                {lang === 'en' ? '(doesn’t do wood)' : '(exceto madeira)'}
+                {432 + tardisQuoteIdx * 108} Hz
               </span>
               <button
                 type="button"
                 onClick={handleCycleSonic}
                 className="modal-action-btn font-label text-label-md"
               >
-                {lang === 'en' ? 'Calibrate Frequency' : 'Calibrar Frequência'}
+                {lang === 'en' ? 'Next quote' : 'Próxima citação'}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Easter Egg Modal #2: Resident Evil (S.T.A.R.S. Save Room Terminal) */}
+      {/* Minimalist Easter Egg Modal #2: Resident Evil */}
       {starsModalOpen && (
         <div
           className="modal-backdrop"
@@ -1021,10 +1063,13 @@ export const App: React.FC = () => {
           aria-labelledby="stars-title"
           onClick={() => setStarsModalOpen(false)}
         >
-          <div className="modal-card re-modal" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-card re-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <header className="modal-header">
-              <h3 id="stars-title" className="font-headline text-headline-md">
-                S.T.A.R.S. — Save Room Terminal
+              <h3 id="stars-title" className="font-headline text-title-lg">
+                S.T.A.R.S. · Save Room
               </h3>
               <button
                 type="button"
@@ -1032,28 +1077,24 @@ export const App: React.FC = () => {
                 aria-label="Close S.T.A.R.S. terminal"
                 className="modal-close-btn"
               >
-                <X size={16} />
+                <X size={15} />
               </button>
             </header>
 
-            <p className="font-label text-label-md modal-kicker">
-              {lang === 'en'
-                ? `FILE: SPENCER MANSION • ALPHA TEAM • INK RIBBON x0${inkRibbons}`
-                : `ARQUIVO: MANSÃO SPENCER • EQUIPE ALPHA • INK RIBBON x0${inkRibbons}`}
+            <p className="font-body text-body-md modal-quote">
+              {starsModalText}
             </p>
-
-            <p className="font-body text-body-md modal-quote">{starsModalText}</p>
 
             <div className="modal-footer-box">
               <span className="font-label text-label-md">
-                ECG STATUS: {vitality} (100%)
+                STATUS: {vitality}
               </span>
               <button
                 type="button"
                 onClick={handleUseInkRibbon}
                 className="modal-action-btn font-label text-label-md"
               >
-                {lang === 'en' ? 'Use Ink Ribbon' : 'Usar Ink Ribbon'}
+                {lang === 'en' ? 'Save (Ink Ribbon)' : 'Salvar (Ink Ribbon)'}
               </button>
             </div>
           </div>

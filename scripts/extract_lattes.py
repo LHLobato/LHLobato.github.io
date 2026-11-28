@@ -125,7 +125,7 @@ def parse_event_article(raw_entry: str, idx: int) -> dict:
         event_parts = event_parts[:-1]
 
     if len(event_parts) >= 2:
-        event_name = f"{event_parts[0]} — {event_parts[1]}"
+        event_name = f"{event_parts[0]} ({event_parts[1]})"
     elif len(event_parts) == 1:
         event_name = event_parts[0]
     else:

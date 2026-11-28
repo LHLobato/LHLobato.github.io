@@ -4,6 +4,8 @@ import projectImagesManifest from './projectImages.json';
 
 export type Language = 'en' | 'pt';
 export type ProjectFolder = 'projeto1' | 'projeto2' | 'projeto3' | 'projeto4';
+export type SkillIconKey = 'web' | 'software' | 'ai' | 'data' | 'database' | 'devops';
+export type SkillAccent = 'blue' | 'emerald' | 'cyan';
 
 export interface SocialLinks {
   github: { handle: string; url: string };
@@ -20,8 +22,12 @@ export interface ExperienceRow {
   descriptionEn?: string;
 }
 
-export interface SkillColumn {
+export interface SkillBox {
+  id: string;
+  icon: SkillIconKey;
+  accent: SkillAccent;
   title: string;
+  subtitle: string;
   items: string[];
 }
 
@@ -123,7 +129,7 @@ export interface LocalizedProfileContent {
   aboutParagraphs: string[];
   defaultExperiences: ExperienceRow[];
   skillsLead: string;
-  skillColumns: SkillColumn[];
+  skillBoxes: SkillBox[];
 }
 
 export const PROFILE_META = {
@@ -139,7 +145,7 @@ export const LOCALIZED_CONTENT: Record<Language, LocalizedProfileContent> = {
     kicker: 'UNESP • LIPAI • SOFTWARE ENGINEERING & AI',
     heroTitle: 'Applied AI research and software engineering for real-world solutions.',
     heroLead:
-      "I'm Luís Henrique, a Computer Science student at UNESP and an Artificial Intelligence researcher at LIPAI. My focus lies at the intersection of applied research and software engineering: I enjoy taking Machine Learning and Deep Learning models off the paper and turning them into real APIs and production solutions.",
+      "I'm Luís Henrique, a Computer Science student at UNESP and an Artificial Intelligence researcher at LIPAI. My focus lies at the intersection of applied research and software engineering: I enjoy taking Machine Learning and Deep Learning models off the paper and turning them into APIs and production solutions.",
     ctaProjects: 'Explore projects',
     ctaArticles: 'Read published papers',
     lattesLabel: 'Lattes CV',
@@ -158,8 +164,8 @@ export const LOCALIZED_CONTENT: Record<Language, LocalizedProfileContent> = {
     sections: {
       aboutIndex: '01 / ABOUT ME',
       aboutTitle: 'Background & Research',
-      skillsIndex: '02 / SKILLS',
-      skillsTitle: 'Specializations',
+      skillsIndex: '02 / SKILLS & TECHNOLOGIES',
+      skillsTitle: 'Technologies & Domains',
       projectsIndex: '03 / PROJECTS',
       projectsTitle: 'Selected works',
       articlesIndex: '04 / SCIENTIFIC ARTICLES',
@@ -176,9 +182,9 @@ export const LOCALIZED_CONTENT: Record<Language, LocalizedProfileContent> = {
       repo: 'Repository',
     },
     aboutParagraphs: [
-      "I'm Luís Henrique, a Computer Science student at UNESP and an Artificial Intelligence researcher at LIPAI. My focus lies at the intersection of applied research and software engineering: I enjoy taking Machine Learning and Deep Learning models off the paper and turning them into real APIs and production solutions.",
-      'In research, I have developed knowledge and specializations in Computer Vision, NLP, and Data Science, with papers published in relevant international conferences.',
-      'In development, I focus on backend engineering — with an emphasis on RAG systems, recommender systems, and AI-integrated solutions, whether generative, agentic, or custom model development, depending on the problem to be solved. I also have experience with databases and web development.',
+      "I'm Luís Henrique, a Computer Science student at UNESP and an Artificial Intelligence researcher at LIPAI. My focus lies at the intersection of applied research and software engineering: I enjoy taking Machine Learning and Deep Learning models off the paper and turning them into APIs and production solutions.",
+      'In research, I have developed knowledge and specializations in Computer Vision, NLP, and Data Science, with papers published in international conferences.',
+      'In development, I focus on backend engineering, with an emphasis on RAG systems, recommender systems, and AI-integrated solutions, whether generative, agentic, or custom model development, depending on the problem to be solved. I also have experience with databases and web development.',
     ],
     defaultExperiences: [
       {
@@ -195,26 +201,78 @@ export const LOCALIZED_CONTENT: Record<Language, LocalizedProfileContent> = {
       },
     ],
     skillsLead:
-      'I work primarily with Python, PyTorch, FastAPI, PostgreSQL (pgvector), and Docker, always focusing on rigorous metrics, computational efficiency, and production-ready code beyond the notebook.',
-    skillColumns: [
+      'Technologies, languages, and tools organized by domain across software development, data science, artificial intelligence, databases, and web applications.',
+    skillBoxes: [
       {
-        title: 'Artificial Intelligence & Research',
+        id: 'web',
+        icon: 'web',
+        accent: 'blue',
+        title: 'Web Development',
+        subtitle: 'Frontend & Web Applications',
+        items: ['JavaScript', 'TypeScript', 'React', 'HTML & CSS', 'Node.js'],
+      },
+      {
+        id: 'software',
+        icon: 'software',
+        accent: 'emerald',
+        title: 'Software Development',
+        subtitle: 'Languages & Frameworks',
+        items: ['Python', 'Java', 'C', 'FastAPI', 'Streamlit'],
+      },
+      {
+        id: 'ai',
+        icon: 'ai',
+        accent: 'cyan',
+        title: 'Artificial Intelligence',
+        subtitle: 'Deep Learning & LLMs',
         items: [
-          'Python & PyTorch (Machine Learning / Deep Learning)',
-          'Computer Vision, NLP & Data Science',
-          'RAG Systems & Vector Search (PostgreSQL / pgvector)',
-          'LLM & Agent Orchestration (LangChain, Gemini API)',
-          'Recommender Systems & Rigorous Metrics Evaluation',
+          'PyTorch',
+          'Computer Vision & NLP',
+          'RAG Systems',
+          'LangChain & Gemini API',
+          'ONNX Runtime',
         ],
       },
       {
-        title: 'Software & Backend Engineering',
+        id: 'data',
+        icon: 'data',
+        accent: 'emerald',
+        title: 'Data Science',
+        subtitle: 'Analysis & Modeling',
         items: [
-          'Production APIs & Microservices (FastAPI)',
-          'Relational & Vector Databases (PostgreSQL, SQL)',
-          'Containers & Runtime Environments (Docker, Linux, Bash)',
-          'Modern Web Development (TypeScript, React, JavaScript)',
-          'Object-Oriented Programming & Systems (Java)',
+          'Pandas & NumPy',
+          'Scikit-Learn',
+          'Recommender Systems',
+          'Feature Engineering',
+          'Metrics Evaluation',
+        ],
+      },
+      {
+        id: 'database',
+        icon: 'database',
+        accent: 'blue',
+        title: 'Databases & Vector Search',
+        subtitle: 'Relational & Vector Indexing',
+        items: [
+          'PostgreSQL',
+          'SQL',
+          'pgvector',
+          'FAISS',
+          'Vector Similarity & RRF',
+        ],
+      },
+      {
+        id: 'devops',
+        icon: 'devops',
+        accent: 'cyan',
+        title: 'Infrastructure & Tools',
+        subtitle: 'Containers & Environment',
+        items: [
+          'Docker',
+          'Linux & Bash',
+          'Git & GitHub',
+          'Cloudflare Workers',
+          'REST APIs',
         ],
       },
     ],
@@ -242,8 +300,8 @@ export const LOCALIZED_CONTENT: Record<Language, LocalizedProfileContent> = {
     sections: {
       aboutIndex: '01 / SOBRE MIM',
       aboutTitle: 'Trajetória & Pesquisa',
-      skillsIndex: '02 / SKILLS',
-      skillsTitle: 'Especialidades',
+      skillsIndex: '02 / SKILLS & TECNOLOGIAS',
+      skillsTitle: 'Tecnologias & Áreas de Domínio',
       projectsIndex: '03 / PROJETOS',
       projectsTitle: 'Trabalhos selecionados',
       articlesIndex: '04 / ARTIGOS CIENTÍFICOS',
@@ -261,8 +319,8 @@ export const LOCALIZED_CONTENT: Record<Language, LocalizedProfileContent> = {
     },
     aboutParagraphs: [
       'Sou Luís Henrique, estudante de Ciência da Computação na UNESP e pesquisador em Inteligência Artificial no LIPAI. Meu foco está na interseção entre pesquisa aplicada e engenharia de software: gosto de tirar modelos de Machine Learning e Deep Learning do papel e transformá-los em APIs e soluções reais.',
-      'Na pesquisa, desenvolvi conhecimentos e especializações nas áreas de Visão Computacional, NLP e ciência de dados, com trabalhos publicados em eventos internacionais relevantes.',
-      'No desenvolvimento, foco em backends, com foco em sistemas de RAG, sistemas de recomendação e soluções com integração de inteligência artificial — seja generativa, agêntica ou desenvolvimento dos próprios modelos, a depender do problema a ser solucionado. Tenho experiência com banco de dados e desenvolvimento web.',
+      'Na pesquisa, desenvolvi conhecimentos e especializações nas áreas de Visão Computacional, NLP e Ciência de Dados, com trabalhos publicados em eventos internacionais.',
+      'No desenvolvimento, atuo com foco em backend, sistemas de RAG, sistemas de recomendação e soluções com integração de inteligência artificial, seja generativa, agêntica ou desenvolvimento dos próprios modelos, a depender do problema a ser solucionado. Tenho experiência com banco de dados e desenvolvimento web.',
     ],
     defaultExperiences: [
       {
@@ -279,26 +337,78 @@ export const LOCALIZED_CONTENT: Record<Language, LocalizedProfileContent> = {
       },
     ],
     skillsLead:
-      'Trabalho principalmente com Python, PyTorch, FastAPI, PostgreSQL (pgvector) e Docker, sempre com atenção a métricas rigorosas, eficiência computacional e código pronto para rodar fora do notebook.',
-    skillColumns: [
+      'Tecnologias, linguagens e ferramentas organizadas por área de atuação em desenvolvimento de software, ciência de dados, inteligência artificial, bancos de dados e desenvolvimento web.',
+    skillBoxes: [
       {
-        title: 'Inteligência Artificial & Pesquisa',
+        id: 'web',
+        icon: 'web',
+        accent: 'blue',
+        title: 'Desenvolvimento Web',
+        subtitle: 'Frontend & Aplicações Web',
+        items: ['JavaScript', 'TypeScript', 'React', 'HTML e CSS', 'Node.js'],
+      },
+      {
+        id: 'software',
+        icon: 'software',
+        accent: 'emerald',
+        title: 'Desenvolvimento de Software',
+        subtitle: 'Linguagens & Frameworks',
+        items: ['Python', 'Java', 'C', 'FastAPI', 'Streamlit'],
+      },
+      {
+        id: 'ai',
+        icon: 'ai',
+        accent: 'cyan',
+        title: 'Inteligência Artificial',
+        subtitle: 'Deep Learning & LLMs',
         items: [
-          'Python & PyTorch (Machine Learning / Deep Learning)',
-          'Visão Computacional, NLP & Ciência de Dados',
-          'Sistemas de RAG & Busca Vetorial (PostgreSQL / pgvector)',
-          'Orquestração de LLMs & Agentes (LangChain, Gemini API)',
-          'Sistemas de Recomendação & Avaliação de Métricas',
+          'PyTorch',
+          'Visão Computacional & NLP',
+          'Sistemas de RAG',
+          'LangChain & Gemini API',
+          'ONNX Runtime',
         ],
       },
       {
-        title: 'Engenharia de Software & Backend',
+        id: 'data',
+        icon: 'data',
+        accent: 'emerald',
+        title: 'Ciência de Dados',
+        subtitle: 'Análise & Modelagem',
         items: [
-          'APIs de Produção & Microsserviços (FastAPI)',
-          'Bancos de Dados Relacionais & Vetoriais (PostgreSQL, SQL)',
-          'Containers & Ambiente de Execução (Docker, Linux, Bash)',
-          'Desenvolvimento Web Moderno (TypeScript, React, JavaScript)',
-          'Programação Orientada a Objetos & Sistemas (Java)',
+          'Pandas & NumPy',
+          'Scikit-Learn',
+          'Sistemas de Recomendação',
+          'Engenharia de Atributos',
+          'Avaliação de Métricas',
+        ],
+      },
+      {
+        id: 'database',
+        icon: 'database',
+        accent: 'blue',
+        title: 'Banco de Dados',
+        subtitle: 'Relacional & Busca Vetorial',
+        items: [
+          'PostgreSQL',
+          'SQL',
+          'pgvector',
+          'FAISS',
+          'Busca Vetorial & RRF',
+        ],
+      },
+      {
+        id: 'devops',
+        icon: 'devops',
+        accent: 'cyan',
+        title: 'Infraestrutura & Ferramentas',
+        subtitle: 'Containers & Ambiente',
+        items: [
+          'Docker',
+          'Linux & Bash',
+          'Git & GitHub',
+          'Cloudflare Workers',
+          'APIs REST',
         ],
       },
     ],
@@ -412,8 +522,8 @@ export const PROJECTS: ProjectItem[] = [
       en: 'FAISS · Google Embeddings · Gemini API (Gemini 3.5-flash-lite) · React + TypeScript',
       pt: 'FAISS · Google Embeddings · Gemini API (Gemini 3.5-flash-lite) · React + TypeScript',
     },
-    deployUrl: 'https://github.com/LHLobato',
-    repoUrl: 'https://github.com/LHLobato',
+    deployUrl: 'https://lhlobato.github.io/gemini-RAG/',
+    repoUrl: 'https://github.com/LHLobato/gemini-RAG',
     imageUrl: './assets/projeto2/01-rag-chat-dashboard.png',
     architectureNote:
       'Document Chunking ➔ Google Embeddings ➔ FAISS + Cosine Similarity & RRF (Top-5) ➔ Gemini 3.5-flash-lite',
@@ -423,23 +533,23 @@ export const PROJECTS: ProjectItem[] = [
     category: 'web',
     folder: 'projeto4',
     meta: {
-      en: 'RESPONSIVE LANDING PAGE • CLOUDFLARE WORKERS • WEB',
-      pt: 'LANDING PAGE RESPONSIVA • CLOUDFLARE WORKERS • WEB',
+      en: 'LANDING PAGE • CLOUDFLARE WORKERS • WEB',
+      pt: 'LANDING PAGE • CLOUDFLARE WORKERS • WEB',
     },
     title: 'Pulse Fitness (PullseGym)',
     description: {
-      en: 'Responsive landing page for a fictional gym featuring membership plan comparisons, photo gallery, operating hours, interactive Google Maps location, and direct WhatsApp contact integration, optimized for both desktop and mobile devices.',
-      pt: 'Landing page responsiva (desktop e mobile) para uma academia fictícia, com apresentação e comparativo de planos, galeria do espaço, quadro de horários, localização integrada ao Google Maps e contato direto via WhatsApp.',
+      en: 'Responsive landing page for a fictional gym featuring membership plan comparisons, photo gallery, operating hours, Google Maps location, and WhatsApp contact integration, built for desktop and mobile devices.',
+      pt: 'Landing page responsiva (desktop e mobile) para uma academia fictícia, com apresentação e comparativo de planos, galeria do espaço, quadro de horários, localização no Google Maps e contato via WhatsApp.',
     },
     stackLine: {
-      en: 'Responsive Web Design · Mobile-First · Google Maps · WhatsApp Integration · Cloudflare Workers',
-      pt: 'Design Responsivo (Mobile & Desktop) · Google Maps · Integração WhatsApp · Cloudflare Workers',
+      en: 'Web Design · Mobile & Desktop · Google Maps · WhatsApp Integration · Cloudflare Workers',
+      pt: 'Web Design (Mobile & Desktop) · Google Maps · Integração WhatsApp · Cloudflare Workers',
     },
     deployUrl: 'https://pullsegym.luislobato35.workers.dev/',
     repoUrl: 'https://github.com/LHLobato/pullsegym',
     imageUrl: './assets/projeto4/01-pullsegym-hero.png',
     architectureNote:
-      'Responsive UI (Desktop & Mobile) ➔ Plan Comparison & Gallery ➔ Maps & WhatsApp CTA ➔ Cloudflare Workers Edge Deploy',
+      'Desktop & Mobile UI ➔ Plan Comparison & Gallery ➔ Maps & WhatsApp CTA ➔ Cloudflare Workers Deploy',
   },
 ];
 
